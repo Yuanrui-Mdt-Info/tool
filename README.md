@@ -2,6 +2,8 @@
 
 This monitor tracks competitor product pages (Amazon US + independent stores), stores snapshots, detects multi-field changes, and sends alert emails.
 
+中文文档请看: [README.zh-CN.md](README.zh-CN.md)
+
 ## What It Does (Extended Loop)
 
 1. Read product links from `data/products.csv`.
