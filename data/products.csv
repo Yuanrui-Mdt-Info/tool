@@ -1,0 +1,18 @@
+product_id,brand,relationship,category,channel,country_market,url_type,priority,product_line,product_name,url,site_type,watch_keywords,enabled
+B0EXAMPLE01,ExampleBrand,competitor,Chargers,Amazon,US,pdp,C,Chargers,65W GaN Charger,https://www.amazon.com/dp/B0EXAMPLE01,amazon,gan|65w|fast charging,0
+shopify-cable-01,ExampleStore,competitor,Cables,DTC,US,pdp,C,Cables,USB-C Cable 2m,https://example-store.com/products/usb-c-cable-2m,independent,usb-c|2m|braided,0
+B07F2H1NQR,Renpho,competitor,Foot Massager,Amazon,US,pdp,B,Foot Massager,Foot Massager with Heat,https://www.amazon.com/RENPHO-Massager-Compression-Fasciitis-Circulation/dp/B07F2H1NQR,amazon,massager|compression|heat|plantar fasciitis,0
+renpho-solheel,Renpho,competitor,Foot Massager,DTC,US,pdp,B,Foot Massager,SOLHEEL Foot Massager,https://renpho.com/products/solheel-foot-massager?variant=44798210801836,independent,massager|shiatsu|compression|heat,1
+B0FJFL8KP4,Renpho,competitor,Body Scale,Amazon,US,pdp,B,Body Scale,8-Electrode Body Composition Scale,https://www.amazon.com/RENPHO-8-Electrode-Composition-Rechargeable-Full-Color/dp/B0FJFL8KP4,amazon,8-electrode|body composition|rechargeable|full-color,1
+renpho-eyeris-3,Renpho,competitor,Eye Massager,DTC,US,pdp,B,Eye Massager,Eyeris 3 Eye Massager,https://renpho.com/products/eyeris-3?variant=42938439270572,independent,eyeris|eye massager|heat|bluetooth,1
+nekteck-footmassager-upgraded,Nekteck,owned,Foot Massager,DTC,US,pdp,A,Foot Massager,Foot Massager with Heat - Upgraded,https://nekteck.com/collections/footmassager/products/nekteck-foot-massager-with-heat-upgraded-version,independent,foot massager|heat|shiatsu,1
+www-therabody-com-08e7fb0d37,Therabody,competitor,Massage Gun,DTC,US,pdp,B,Massage Gun,Theragun Sense,https://www.therabody.com/products/theragun-sense-black,independent,massage gun|heat|recovery,1
+renpho-com-4d3056fe70,Renpho,competitor,Massage Gun,DTC,US,pdp,B,Massage Gun,Active Massage Gun with Heat and Cold Head,https://renpho.com/products/acitve-massage-gun-with-heat-and-cold-head,independent,massage gun|heat|cold,1
+www-comfier-com-2644a9ff88,Comfier,competitor,Foot Massager,DTC,US,pdp,B,Foot Massager,Shiatsu Foot Massager 5212,https://www.comfier.com/collections/best-sellers/products/shiatsu-foot-massager-5212,independent,foot massager|shiatsu|heat,1
+hyperice-com-4e9342981a,Hyperice,competitor,Recovery,DTC,US,homepage,C,Recovery,Hyperice Homepage,https://hyperice.com/,independent,Hypriece,0
+renpho-com-6f06ff6a45,Renpho,competitor,,DTC,US,pdp,B,,,https://renpho.com/products/shiatsu-calf-foot-massager-pro-2?variant=42502887407788,independent,,1
+renpho-com-a4bcd77327,Renpho,competitor,,DTC,US,pdp,B,,,https://renpho.com/products/foot-massager-069r?variant=42294172254380,independent,,1
+www-ozon-ru-b7991b249a,Nekteck,owned,,DTC,US,other,C,,,https://www.ozon.ru/product/nekteck-2026-novinka-massazher-dlya-shei-i-plech-elektricheskiy-s-podogrevom-spiny-i-nog-2316326520/?at=99tr6pZn0InnWXEZsMx0N1Lu2DQV1vIRyJ0GXfVx4zDv,independent,,0
+www-ozon-ru-26f68adf70,Nekteck,owned,,DTC,US,other,C,,,https://www.ozon.ru/product/bogge-neckeasy-premium-massazher-dlya-shei-i-plech-spiny-dlya-nog-mnogofunktsionalnyy-massazher-dlya-4148422712/?at=36tWPE83kIOGQY2VcnRA5Q7FOpJzk1FppnYglIXJG0gw,independent,,0
+www-therabody-com-a808905519,Therabody,competitor,Massage Gun,DTC,US,pdp,B,Massage Gun,Theragun Prime Plus,https://www.therabody.com/products/theragun-prime-plus,independent,massage gun|heat|percussive therapy,1
+www-therabody-com-db06fbf6a4,Therabody,competitor,Compression Boots,DTC,US,pdp,B,Compression Boots,JetBoots Prime Regular,https://www.therabody.com/products/jetboots-prime-regular,independent,compression boots|recovery|battery life,1

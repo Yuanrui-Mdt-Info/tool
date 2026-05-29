@@ -1,0 +1,22 @@
+{
+  "enabled_alert_types": [
+    "PRICE_CHANGE",
+    "CURRENCY_CHANGE",
+    "TITLE_CHANGE",
+    "TITLE_KEYWORD_CHANGE",
+    "FEATURE_CHANGE",
+    "SPEC_CHANGE",
+    "MARKET_SIGNAL_CHANGE",
+    "BLOCKED_PAGE"
+  ],
+  "price_change_threshold_pct": 0.1,
+  "feature_change_min_items": 1,
+  "spec_change_min_items": 1,
+  "http_retry_count": 2,
+  "http_retry_backoff_seconds": 1.0,
+  "amazon_blocked_retry_count": 1,
+  "http_max_html_bytes": 1500000,
+  "max_feature_items": 12,
+  "max_feature_items_in_alert": 6,
+  "max_spec_items_in_alert": 8
+}

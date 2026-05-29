@@ -1,0 +1,8 @@
+{
+  "alert_to": "linshizhi@nekteck.com",
+  "send_on_no_alerts": false,
+  "price_change_threshold_pct": 3.0,
+  "spec_watch_fields": "dimensions|weight|wattage|power|voltage|temperature|heat|timer|intensity|mode|foot size|material",
+  "from_email": "media@nekteck.com",
+  "from_name": "Nekteck Media"
+}

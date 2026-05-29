@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>竞品监控扩展看板</title>
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --brand: #2563eb;
+      --ok: #047857;
+      --warn: #b45309;
+      --bad: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .topbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .control-wide {
+      grid-column: span 2;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
+    }
+    textarea {
+      min-height: 108px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 0 5px;
+    }
+    .brand-field {
+      display: grid;
+      gap: 8px;
+    }
+    .brand-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .brand-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .brand-option input {
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+    .ghost {
+      background: #fff;
+      color: var(--text);
+    }
+    .status-pill {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      display: inline-block;
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    .status-ok { color: var(--ok); border-color: #a7f3d0; background: #ecfdf5; }
+    .status-bad { color: var(--bad); border-color: #fecaca; background: #fef2f2; }
+    .status-warn { color: var(--warn); border-color: #fde68a; background: #fffbeb; }
+    .table-wrap {
+      overflow: auto;
+      max-height: 64vh;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      font-size: 12px;
+      vertical-align: top;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #f9fafb;
+      z-index: 1;
+      font-weight: 700;
+    }
+    .clickable:hover { background: #f3f7ff; }
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #e6ebf5;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .bar > span {
+      display: block;
+      height: 10px;
+      background: #2563eb;
+    }
+    .sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .compare-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .compare-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .compare-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+    .matrix-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+      background: #fff;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+    .matrix-table th,
+    .matrix-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      font-size: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .matrix-table th:first-child,
+    .matrix-table td:first-child {
+      min-width: 180px;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: #fff;
+    }
+    .matrix-table th:first-child {
+      z-index: 2;
+      background: #f9fafb;
+    }
+    .value-hit {
+      color: #047857;
+      font-weight: 700;
+    }
+    .value-missing {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+    .chip {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      margin: 2px 4px 0 0;
+      background: #f9fafb;
+    }
+    .suggestion-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .suggestion {
+      border-left: 3px solid #93c5fd;
+      background: #f8fbff;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+    .suggestion b {
+      display: block;
+      margin-bottom: 2px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr 1fr; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .sub-grid { grid-template-columns: 1fr; }
+      .compare-summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="title">竞品监控扩展看板</div>
+        <div class="muted">支持“链接录入 + 查询筛选 + 链接对比”，已接入现有监控数据库</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="clearBtn" class="ghost">清除</button>
+        <button id="refreshBtn" class="ghost">刷新数据</button>
+        <button id="runBtn" class="primary">立即运行一次抓取</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="card"><div class="muted">监控产品数</div><div id="kpiTotal" class="kpi-value">0</div></div>
+      <div class="card"><div class="muted">最新成功率</div><div id="kpiSuccessRate" class="kpi-value">0%</div></div>
+      <div class="card"><div class="muted">平均GTM分</div><div id="kpiGtmAvg" class="kpi-value">0%</div></div>
+      <div class="card"><div class="muted">异常产品数</div><div id="kpiErrorCount" class="kpi-value">0</div></div>
+      <div class="card"><div class="muted">最近刷新</div><div id="kpiUpdatedAt" class="kpi-value" style="font-size:16px;">-</div></div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="section-title">首页主要参数可视化看板（随筛选联动）</div>
+      <div id="homeMatrixMeta" class="muted">加载中...</div>
+      <div class="matrix-panel" style="margin-top:8px;">
+        <table class="matrix-table">
+          <thead id="homeMatrixHead"></thead>
+          <tbody id="homeMatrixBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div class="section-title">查询方式（筛选 + 搜索）</div>
+        <div class="controls">
+          <input id="searchInput" class="control-wide" aria-label="搜索" placeholder="搜索：品牌/产品/标题/链接/关键词">
+          <select id="brandSelect" aria-label="品牌筛选"><option value="">全部品牌</option></select>
+          <select id="relationshipSelect" aria-label="关系筛选">
+            <option value="">全部关系</option>
+            <option value="owned">自有</option>
+            <option value="competitor">竞品</option>
+          </select>
+          <select id="lineSelect" aria-label="产品线筛选"><option value="">全部产品线</option></select>
+          <select id="categorySelect" aria-label="品类筛选"><option value="">全部品类</option></select>
+          <select id="channelSelect" aria-label="渠道筛选"><option value="">全部渠道</option></select>
+          <select id="siteSelect" aria-label="站点筛选"><option value="">全部站点</option></select>
+          <select id="urlTypeSelect" aria-label="链接类型筛选"><option value="">全部链接类型</option></select>
+          <select id="prioritySelect" aria-label="优先级筛选"><option value="">全部优先级</option></select>
+          <select id="statusSelect" aria-label="状态筛选">
+            <option value="all">全部状态</option>
+            <option value="success">仅成功</option>
+            <option value="error">仅异常</option>
+          </select>
+          <button id="queryBtn" class="ghost">查询</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>品牌/产品</th>
+                <th>站点</th>
+                <th>价格</th>
+                <th>GTM</th>
+                <th>卖点/参数</th>
+                <th>状态</th>
+                <th>可用性</th>
+                <th>更新时间</th>
+              </tr>
+            </thead>
+            <tbody id="rowsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="section-title">链接方式（加入监控）</div>
+          <textarea id="linksInput" aria-label="监控链接" placeholder="每行一个链接，例如：&#10;https://nekteck.com/...&#10;https://renpho.com/..."></textarea>
+          <div class="sub-grid" style="margin-top:8px;">
+            <div class="brand-field">
+              <label class="field-label">品牌（可多选）</label>
+              <div id="brandMultiSelect" class="brand-options">
+                <label class="brand-option"><input name="brandOption" aria-label="Nekteck" type="checkbox" value="Nekteck" checked> Nekteck（自有品牌）</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Renpho" type="checkbox" value="Renpho"> Renpho</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Snailax" type="checkbox" value="Snailax"> Snailax</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Comfier" type="checkbox" value="Comfier"> Comfier</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Resteck" type="checkbox" value="Resteck"> Resteck</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Fitking" type="checkbox" value="Fitking"> Fitking</label>
+                <label class="brand-option"><input name="brandOption" aria-label="Bob & Brad" type="checkbox" value="Bob & Brad"> Bob & Brad</label>
+              </div>
+              <input id="brandCustomInput" aria-label="自定义品牌" placeholder="自定义品牌">
+            </div>
+            <div>
+              <label class="field-label" for="lineInput">产品线</label>
+              <input id="lineInput" placeholder="可选：统一产品线">
+            </div>
+          </div>
+          <div class="sub-grid" style="margin-top:8px;">
+            <div>
+              <label class="field-label" for="linkRelationshipInput">关系</label>
+              <select id="linkRelationshipInput">
+                <option value="">自动识别</option>
+                <option value="owned">自有</option>
+                <option value="competitor">竞品</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="categoryInput">品类</label>
+              <input id="categoryInput" placeholder="可选：Foot Massager / Eye Massager">
+            </div>
+          </div>
+          <div class="sub-grid" style="margin-top:8px;">
+            <div>
+              <label class="field-label" for="priorityInput">优先级</label>
+              <select id="priorityInput">
+                <option value="B">B：常规监控</option>
+                <option value="A">A：重点监控</option>
+                <option value="C">C：低优先级</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="countryInput">市场</label>
+              <input id="countryInput" value="US" placeholder="US">
+            </div>
+          </div>
+          <input id="keywordsInput" style="margin-top:8px;" aria-label="监控关键词" placeholder="可选：监控关键词（用 | 分隔）">
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button id="addLinksBtn" class="primary">加入监控清单</button>
+            <button id="compareBtn" class="ghost">仅做即时对比</button>
+          </div>
+          <div id="linkMsg" class="muted" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">告警邮箱</div>
+          <input id="alertEmailInput" aria-label="收件邮箱" placeholder="收件邮箱，可填多个，用逗号分隔">
+          <div class="sub-grid" style="margin-top:8px;">
+            <div>
+              <label class="field-label" for="priceThresholdInput">价格波动阈值(%)</label>
+              <input id="priceThresholdInput" type="number" min="0.1" step="0.1" value="3">
+            </div>
+            <div>
+              <label class="field-label" for="specWatchInput">重点参数字段</label>
+              <input id="specWatchInput" placeholder="dimensions|weight|power|voltage|heat">
+            </div>
+          </div>
+          <div class="muted" style="margin-top:6px;">发件邮箱：<span id="alertFromEmail">media@nekteck.com</span></div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button id="saveEmailBtn" class="ghost">保存邮箱</button>
+            <button id="testEmailBtn" class="ghost">发送测试邮件</button>
+          </div>
+          <div id="emailMsg" class="muted" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">产品历史（点击左侧行）</div>
+          <div id="historyTitle" class="muted">尚未选择产品</div>
+          <div id="historyContent" class="muted" style="margin-top:8px;">可查看价格轨迹、成功率和最近告警。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="section-title">链接对比结果（即时抓取）</div>
+      <div id="compareWrap" class="compare-wrap">
+        <div class="muted">输入2个以上链接后点击“仅做即时对比”</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      rows: [],
+      filters: {
+        brands: [],
+        relationships: [],
+        categories: [],
+        channels: [],
+        product_lines: [],
+        site_types: [],
+        url_types: [],
+        priorities: [],
+      },
+      fieldConfig: { main_param_rows: [], gtm_required_rows: [], feature_signal_rows: [] },
+    };
+    const DEFAULT_MASSAGE_CATEGORY_TOKENS = ["massage", "massager", "shiatsu", "foot", "eye", "heat", "compression", "按摩"];
+
+    function esc(text) {
+      return String(text ?? "").replace(/[&<>"']/g, (s) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      }[s]));
+    }
+
+    async function getJson(url) {
+      const res = await fetch(url);
+      return res.json();
+    }
+
+    async function postJson(url, payload) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload || {}),
+      });
+      return res.json();
+    }
+
+    function qs() {
+      const search = encodeURIComponent(document.getElementById("searchInput").value.trim());
+      const brand = encodeURIComponent(document.getElementById("brandSelect").value);
+      const relationship = encodeURIComponent(document.getElementById("relationshipSelect").value);
+      const line = encodeURIComponent(document.getElementById("lineSelect").value);
+      const category = encodeURIComponent(document.getElementById("categorySelect").value);
+      const channel = encodeURIComponent(document.getElementById("channelSelect").value);
+      const site = encodeURIComponent(document.getElementById("siteSelect").value);
+      const urlType = encodeURIComponent(document.getElementById("urlTypeSelect").value);
+      const priority = encodeURIComponent(document.getElementById("prioritySelect").value);
+      const status = encodeURIComponent(document.getElementById("statusSelect").value);
+      return `/api/dashboard?search=${search}&brand=${brand}&relationship=${relationship}&product_line=${line}&category=${category}&channel=${channel}&site_type=${site}&url_type=${urlType}&priority=${priority}&status=${status}&limit=300`;
+    }
+
+    function fillSelect(id, values, defaultLabel) {
+      const el = document.getElementById(id);
+      el.innerHTML = `<option value="">${defaultLabel}</option>`;
+      (values || []).forEach((v) => {
+        const opt = document.createElement("option");
+        opt.value = v;
+        opt.textContent = v;
+        el.appendChild(opt);
+      });
+    }
+
+    function freshnessPill(v) {
+      if (v === "fresh") return `<span class="status-pill status-ok">fresh</span>`;
+      if (v === "stale_from_last_success") return `<span class="status-pill status-warn">stale</span>`;
+      return `<span class="status-pill status-bad">empty</span>`;
+    }
+
+    function statusPill(ok, error) {
+      if (ok) return `<span class="status-pill status-ok">success</span>`;
+      return `<span class="status-pill status-bad" title="${esc(error || "")}">error</span>`;
+    }
+
+    function renderRows(rows, emptyMessage = "请输入搜索词或选择筛选条件后点击“查询”。") {
+      const body = document.getElementById("rowsBody");
+      body.innerHTML = "";
+      if (!rows || rows.length === 0) {
+        body.innerHTML = `<tr><td colspan="8" class="muted">${esc(emptyMessage)}</td></tr>`;
+        return;
+      }
+      rows.forEach((r) => {
+        const tr = document.createElement("tr");
+        tr.className = "clickable";
+        tr.innerHTML = `
+          <td>
+            <div><b>${esc(r.brand || "-")}</b></div>
+            <div>${esc(r.product_name || r.product_id)}</div>
+            <div class="muted">${esc(r.product_line || "")}</div>
+            <div>
+              <span class="chip">${esc(r.relationship === "owned" ? "自有" : "竞品")}</span>
+              ${r.priority ? `<span class="chip">P${esc(r.priority)}</span>` : ""}
+            </div>
+          </td>
+          <td>
+            <div>${esc(r.channel || r.site_type || "-")}</div>
+            <div class="muted">${esc(r.url_type || "")}</div>
+          </td>
+          <td>
+            <div>${r.price_value ?? "-"} ${esc(r.currency || "")}</div>
+            <div class="muted">${esc(r.title || "").slice(0, 80)}</div>
+          </td>
+          <td>
+            <div><b>${esc(r.gtm_score || "-")}</b> (${r.gtm_score_pct ?? 0}%)</div>
+            <div class="bar"><span style="width:${Number(r.gtm_score_pct || 0)}%"></span></div>
+          </td>
+          <td>${r.features_count ?? 0} / ${r.specs_count ?? 0}</td>
+          <td>${statusPill(r.success, r.error_message)} ${freshnessPill(r.data_freshness)}</td>
+          <td>${esc(r.availability || "-")}</td>
+          <td>
+            <div>${esc(r.latest_captured_at || "-")}</div>
+            ${r.fallback_captured_at ? `<div class="muted">fallback: ${esc(r.fallback_captured_at)}</div>` : ""}
+          </td>
+        `;
+        tr.addEventListener("click", () => loadHistory(r));
+        body.appendChild(tr);
+      });
+    }
+
+    function renderKpis(rows) {
+      const total = rows.length;
+      const success = rows.filter((r) => r.success).length;
+      const errorCount = total - success;
+      const successRate = total > 0 ? (success / total * 100).toFixed(1) : "0.0";
+      const gtmAvg = total > 0 ? (rows.reduce((acc, r) => acc + Number(r.gtm_score_pct || 0), 0) / total).toFixed(1) : "0.0";
+      document.getElementById("kpiTotal").textContent = String(total);
+      document.getElementById("kpiSuccessRate").textContent = `${successRate}%`;
+      document.getElementById("kpiGtmAvg").textContent = `${gtmAvg}%`;
+      document.getElementById("kpiErrorCount").textContent = String(errorCount);
+      document.getElementById("kpiUpdatedAt").textContent = new Date().toLocaleTimeString();
+    }
+
+    function clearKpis() {
+      document.getElementById("kpiTotal").textContent = "0";
+      document.getElementById("kpiSuccessRate").textContent = "0%";
+      document.getElementById("kpiGtmAvg").textContent = "0%";
+      document.getElementById("kpiErrorCount").textContent = "0";
+      document.getElementById("kpiUpdatedAt").textContent = "-";
+    }
+
+    function toFiniteNumber(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function firstNonEmptyValue(...values) {
+      for (const value of values) {
+        const text = String(value ?? "").trim();
+        if (text) return text;
+      }
+      return "";
+    }
+
+    function getSpecByKeywords(specs, keywords) {
+      const source = specs || {};
+      const entries = Object.entries(source);
+      for (const kw of (keywords || [])) {
+        const kwLower = String(kw || "").trim().toLowerCase();
+        if (!kwLower) continue;
+        for (const [k, v] of entries) {
+          const keyLower = String(k || "").trim().toLowerCase();
+          if (keyLower.includes(kwLower)) {
+            const text = String(v ?? "").trim();
+            if (text) return text;
+          }
+        }
+      }
+      return "";
+    }
+
+    function getFeatureByKeywords(features, keywords) {
+      const items = (features || [])
+        .map((x) => String(x ?? "").trim())
+        .filter((x) => x && x.length <= 90);
+      for (const kw of (keywords || [])) {
+        const kwLower = String(kw || "").trim().toLowerCase();
+        if (!kwLower) continue;
+        for (const item of items) {
+          if (item.toLowerCase().includes(kwLower)) return item;
+        }
+      }
+      return "";
+    }
+
+    function buildHomeMainParams(row) {
+      if (row.main_params && Object.keys(row.main_params).length > 0) {
+        return row.main_params;
+      }
+      const market = row.market_signals || {};
+      const specs = row.key_specs || {};
+      const features = row.key_features || [];
+      const priceValue = toFiniteNumber(row.price_value);
+      const listPrice = toFiniteNumber(row.compare_at_price ?? market.list_price_value);
+      let discountPercent = toFiniteNumber(row.discount_percent ?? market.discount_percent);
+      if (discountPercent === null && listPrice !== null && priceValue !== null && listPrice >= priceValue && priceValue > 0) {
+        discountPercent = ((listPrice - priceValue) / listPrice) * 100;
+      }
+
+      return {
+        price: priceValue,
+        currency: String(row.currency || "").trim(),
+        list_price: listPrice,
+        discount_percent: discountPercent,
+        rating_value: toFiniteNumber(row.rating_value ?? market.rating_value),
+        review_count: toFiniteNumber(row.review_count ?? market.review_count),
+        sku: firstNonEmptyValue(row.sku, market.sku),
+        barcode_or_mpn: firstNonEmptyValue(market.gtin, market.mpn, market.asin, market.item_model_number),
+        product_dimensions: firstNonEmptyValue(market.product_dimensions, getSpecByKeywords(specs, ["product dimensions", "package dimensions", "dimensions", "size"])),
+        item_weight: firstNonEmptyValue(market.item_weight, getSpecByKeywords(specs, ["item weight", "weight"])),
+        power_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["wattage", "rated power", "power"]), getFeatureByKeywords(features, ["watt", "power"])),
+        voltage_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["voltage", "input voltage", "rated voltage", "input"]), getFeatureByKeywords(features, ["voltage", "110v", "120v"])),
+        heat_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["temperature", "heat", "heating"]), getFeatureByKeywords(features, ["heat", "heating", "warm"])),
+        timer_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["timer", "timing", "auto-off", "auto off"]), getFeatureByKeywords(features, ["timer", "auto-off", "auto off"])),
+        intensity_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["intensity", "mode", "levels", "compression"]), getFeatureByKeywords(features, ["intensity", "levels", "mode", "compression"])),
+        foot_size_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["foot size", "shoe size", "fit for", "size range"]), getFeatureByKeywords(features, ["foot size", "shoe size", "fits up to", "fit for"])),
+        material_spec: firstNonEmptyValue(getSpecByKeywords(specs, ["material", "fabric", "cover"]), getFeatureByKeywords(features, ["material", "leather", "fabric"])),
+        availability: firstNonEmptyValue(row.availability, market.availability),
+        image_count: toFiniteNumber(market.image_count),
+        variation_count: toFiniteNumber(market.variation_count),
+        features_count: toFiniteNumber(row.features_count),
+        specs_count: toFiniteNumber(row.specs_count),
+      };
+    }
+
+    function formatHomeMainValue(params, key) {
+      const value = params[key];
+      if (key === "price" || key === "list_price") {
+        const n = toFiniteNumber(value);
+        if (n === null) return "-";
+        return `${n.toFixed(2)}${params.currency ? ` ${params.currency}` : ""}`;
+      }
+      if (key === "discount_percent") {
+        const n = toFiniteNumber(value);
+        return n === null ? "-" : `${n.toFixed(1)}%`;
+      }
+      if (key === "rating_value") {
+        const n = toFiniteNumber(value);
+        return n === null ? "-" : n.toFixed(2);
+      }
+      if (key === "review_count" || key === "image_count" || key === "variation_count" || key === "features_count" || key === "specs_count") {
+        const n = toFiniteNumber(value);
+        return n === null ? "-" : String(Math.round(n));
+      }
+      const text = String(value ?? "").trim();
+      return text || "-";
+    }
+
+    function renderHomeMainMatrix(rows) {
+      const head = document.getElementById("homeMatrixHead");
+      const body = document.getElementById("homeMatrixBody");
+      const meta = document.getElementById("homeMatrixMeta");
+      if (!head || !body || !meta) return;
+
+      if (!rows || rows.length === 0) {
+        meta.textContent = "当前筛选下无产品。";
+        head.innerHTML = "";
+        body.innerHTML = `<tr><td class="muted">暂无可视化参数数据</td></tr>`;
+        return;
+      }
+
+      const visibleRows = rows.slice(0, 12);
+      const hiddenCount = Math.max(0, rows.length - visibleRows.length);
+      meta.textContent = hiddenCount > 0
+        ? `当前筛选 ${rows.length} 个产品，首页矩阵展示前 ${visibleRows.length} 个（请用筛选聚焦品牌/产品线查看完整细分）。`
+        : `当前筛选 ${rows.length} 个产品。`;
+
+      head.innerHTML = `
+        <tr>
+          <th>参数</th>
+          ${visibleRows.map((r, idx) => `
+            <th>
+              <div><b>${esc(r.product_name || r.product_id || `产品${idx + 1}`)}</b></div>
+              <div class="muted">${esc(r.brand || "")}</div>
+            </th>
+          `).join("")}
+        </tr>
+      `;
+
+      let html = "";
+      const matrixRows = (state.fieldConfig.main_param_rows || []).filter((x) => x && x.key);
+      if (matrixRows.length === 0) {
+        body.innerHTML = `<tr><td class="muted">字段配置加载中...</td></tr>`;
+        return;
+      }
+      matrixRows.forEach((row) => {
+        html += `<tr><td><b>${esc(row.label)}</b></td>`;
+        visibleRows.forEach((productRow) => {
+          const params = buildHomeMainParams(productRow);
+          const text = formatHomeMainValue(params, row.key);
+          html += `<td class="${text === "-" ? "value-missing" : ""}">${esc(text)}</td>`;
+        });
+        html += `</tr>`;
+      });
+      body.innerHTML = html;
+    }
+
+    function clearHomeMainMatrix() {
+      const head = document.getElementById("homeMatrixHead");
+      const body = document.getElementById("homeMatrixBody");
+      const meta = document.getElementById("homeMatrixMeta");
+      if (!head || !body || !meta) return;
+      meta.textContent = "已清除首页参数看板。点击“刷新数据”或设置筛选后查询可重新加载。";
+      head.innerHTML = "";
+      body.innerHTML = `<tr><td class="muted">暂无可视化参数数据</td></tr>`;
+    }
+
+    async function loadFilters() {
+      const data = await getJson("/api/filters");
+      if (!data.ok) return;
+      state.filters = data.filters || state.filters;
+      fillSelect("brandSelect", state.filters.brands, "全部品牌");
+      fillSelect("categorySelect", state.filters.categories, "全部品类");
+      fillSelect("channelSelect", state.filters.channels, "全部渠道");
+      fillSelect("lineSelect", state.filters.product_lines, "全部产品线");
+      fillSelect("siteSelect", state.filters.site_types, "全部站点");
+      fillSelect("urlTypeSelect", state.filters.url_types, "全部链接类型");
+      fillSelect("prioritySelect", state.filters.priorities, "全部优先级");
+    }
+
+    function hasQueryCriteria() {
+      return Boolean(
+        document.getElementById("searchInput").value.trim()
+        || document.getElementById("brandSelect").value
+        || document.getElementById("relationshipSelect").value
+        || document.getElementById("lineSelect").value
+        || document.getElementById("categorySelect").value
+        || document.getElementById("channelSelect").value
+        || document.getElementById("siteSelect").value
+        || document.getElementById("urlTypeSelect").value
+        || document.getElementById("prioritySelect").value
+        || document.getElementById("statusSelect").value !== "all"
+      );
+    }
+
+    async function loadRows({ renderTable = false } = {}) {
+      const data = await getJson(qs());
+      if (!data.ok) return;
+      state.fieldConfig = data.field_config || state.fieldConfig;
+      state.rows = data.rows || [];
+      if (renderTable) {
+        renderRows(state.rows);
+      }
+      renderKpis(state.rows);
+      renderHomeMainMatrix(state.rows);
+    }
+
+    async function loadBrandDefaultMatrix() {
+      const brands = selectedBrandArray();
+      if (brands.length === 0) {
+        state.rows = [];
+        renderKpis(state.rows);
+        clearHomeMainMatrix();
+        return;
+      }
+      const data = await postJson("/api/compare-links", {
+        links: [],
+        brands,
+        category_tokens: DEFAULT_MASSAGE_CATEGORY_TOKENS,
+        limit: 12,
+      });
+      if (!data.ok) return;
+      state.fieldConfig = data.field_config || data.tables || state.fieldConfig;
+      state.rows = data.records || [];
+      renderKpis(state.rows);
+      renderHomeMainMatrix(state.rows);
+    }
+
+    async function runQuery() {
+      if (!hasQueryCriteria()) {
+        renderRows([]);
+        await loadBrandDefaultMatrix();
+        return;
+      }
+      await loadRows({ renderTable: true });
+      if (state.rows.length === 0) {
+        renderRows([], "当前筛选条件下没有匹配结果。");
+      }
+    }
+
+    async function refreshAll() {
+      await loadFilters();
+      if (hasQueryCriteria()) {
+        await loadRows({ renderTable: false });
+      } else {
+        await loadBrandDefaultMatrix();
+      }
+      renderRows([]);
+      await loadEmailSettings();
+    }
+
+    async function clearPageState() {
+      state.rows = [];
+      document.getElementById("searchInput").value = "";
+      document.getElementById("brandSelect").value = "";
+      document.getElementById("relationshipSelect").value = "";
+      document.getElementById("lineSelect").value = "";
+      document.getElementById("categorySelect").value = "";
+      document.getElementById("channelSelect").value = "";
+      document.getElementById("siteSelect").value = "";
+      document.getElementById("urlTypeSelect").value = "";
+      document.getElementById("prioritySelect").value = "";
+      document.getElementById("statusSelect").value = "all";
+      document.getElementById("linksInput").value = "";
+      document.getElementById("brandCustomInput").value = "";
+      document.getElementById("lineInput").value = "";
+      document.getElementById("linkRelationshipInput").value = "";
+      document.getElementById("categoryInput").value = "";
+      document.getElementById("priorityInput").value = "B";
+      document.getElementById("countryInput").value = "US";
+      document.getElementById("keywordsInput").value = "";
+      Array.from(document.querySelectorAll('input[name="brandOption"]')).forEach((opt) => {
+        opt.checked = opt.value === "Nekteck";
+      });
+      document.getElementById("linkMsg").textContent = "";
+      document.getElementById("historyTitle").textContent = "尚未选择产品";
+      document.getElementById("historyContent").textContent = "可查看价格轨迹、成功率和最近告警。";
+      document.getElementById("compareWrap").innerHTML = `<div class="muted">输入2个以上链接后点击“仅做即时对比”</div>`;
+      renderRows([], "已清除。请输入搜索词或选择筛选条件后点击“查询”。");
+      clearKpis();
+      clearHomeMainMatrix();
+    }
+
+    function mailResultText(mail) {
+      if (!mail || !mail.status) return "邮件：未配置";
+      if (mail.status === "SENT") {
+        return `邮件：已发送至 ${(mail.targets || []).join(", ")}`;
+      }
+      if (mail.status === "SKIPPED") {
+        if (mail.reason === "NO_ALERTS") return "邮件：无告警，未发送";
+        if (mail.reason === "NO_ALERT_TO") return "邮件：未填写收件邮箱";
+        return `邮件：未发送（${mail.reason || "SKIPPED"}）`;
+      }
+      if (mail.reason === "SMTP_CONFIG_MISSING") {
+        return `邮件：SMTP配置缺失（${(mail.missing || []).join(", ")}）`;
+      }
+      const firstError = ((mail.results || []).find((x) => x.error_message) || {}).error_message || mail.reason || "ERROR";
+      return `邮件：发送失败（${firstError}）`;
+    }
+
+    async function loadEmailSettings() {
+      const data = await getJson("/api/email-settings");
+      if (!data.ok) return;
+      const settings = data.settings || {};
+      document.getElementById("alertEmailInput").value = settings.alert_to || "";
+      document.getElementById("priceThresholdInput").value = settings.price_change_threshold_pct || 3;
+      document.getElementById("specWatchInput").value = settings.spec_watch_fields || "";
+      document.getElementById("alertFromEmail").textContent = settings.from_email || "media@nekteck.com";
+      const smtpText = data.smtp_configured ? "发件邮箱已接入" : `发件配置缺失：${(data.smtp_missing || []).join(", ")}`;
+      document.getElementById("emailMsg").textContent = smtpText;
+    }
+
+    async function saveEmailSettings() {
+      const alertTo = document.getElementById("alertEmailInput").value.trim();
+      const threshold = Number(document.getElementById("priceThresholdInput").value || 3);
+      const specWatchFields = document.getElementById("specWatchInput").value.trim();
+      const data = await postJson("/api/email-settings", {
+        alert_to: alertTo,
+        send_on_no_alerts: false,
+        price_change_threshold_pct: Number.isFinite(threshold) && threshold > 0 ? threshold : 3,
+        spec_watch_fields: specWatchFields,
+      });
+      if (!data.ok) {
+        document.getElementById("emailMsg").textContent = `保存失败：${data.error || "unknown error"}`;
+        return;
+      }
+      const smtpText = data.smtp_configured ? "发件邮箱已接入" : `发件配置缺失：${(data.smtp_missing || []).join(", ")}`;
+      document.getElementById("emailMsg").textContent = alertTo ? `已保存；${smtpText}` : `已清空收件邮箱；${smtpText}`;
+    }
+
+    async function sendTestEmail() {
+      const alertTo = document.getElementById("alertEmailInput").value.trim();
+      if (!alertTo) {
+        document.getElementById("emailMsg").textContent = "请先填写收件邮箱。";
+        return;
+      }
+      document.getElementById("emailMsg").textContent = "正在发送测试邮件...";
+      const data = await postJson("/api/test-email", { alert_to: alertTo });
+      if (!data.ok) {
+        document.getElementById("emailMsg").textContent = `测试失败：${data.error || "unknown error"}`;
+        return;
+      }
+      document.getElementById("emailMsg").textContent = mailResultText(data.mail_result);
+    }
+
+    async function loadHistory(row) {
+      document.getElementById("historyTitle").textContent = `${row.brand || ""} | ${row.product_name || row.product_id}`;
+      const data = await getJson(`/api/history?product_id=${encodeURIComponent(row.product_id)}&limit=30`);
+      if (!data.ok) {
+        document.getElementById("historyContent").innerHTML = `<span class="status-pill status-bad">加载失败</span>`;
+        return;
+      }
+      const history = data.history || [];
+      const alerts = data.alerts || [];
+      const prices = history
+        .filter((h) => h.success && h.price_value != null)
+        .map((h) => Number(h.price_value));
+      let minP = 0;
+      let maxP = 0;
+      if (prices.length > 0) {
+        minP = Math.min(...prices);
+        maxP = Math.max(...prices);
+      }
+
+      let html = "";
+      html += `<div class="muted">历史快照: ${history.length} | 告警: ${alerts.length}</div>`;
+      if (prices.length > 0) {
+        html += `<div style="margin-top:8px;"><b>价格区间:</b> ${minP} ~ ${maxP}</div>`;
+      }
+      html += `<div style="margin-top:8px;">`;
+      history.slice(0, 8).forEach((h) => {
+        html += `<div class="chip">${esc(h.captured_at)} | ${h.success ? "ok" : "err"} | ${h.price_value ?? "-"} ${esc(h.currency || "")}</div>`;
+      });
+      html += `</div>`;
+      if (alerts.length > 0) {
+        html += `<div style="margin-top:8px;"><b>最近告警:</b></div>`;
+        alerts.slice(0, 5).forEach((a) => {
+          html += `<div class="chip">${esc(a.created_at)} | ${esc(a.alert_type)} | ${esc(a.current_value)}</div>`;
+        });
+      }
+      document.getElementById("historyContent").innerHTML = html;
+    }
+
+    function parseLinksInput() {
+      const raw = document.getElementById("linksInput").value || "";
+      const seen = new Set();
+      const urls = [];
+      raw
+        .split(/(?=https?:\/\/)/i)
+        .flatMap((part) => part.split(/[\s,，]+/))
+        .map((x) => x.trim().replace(/[。；;，,)]+$/g, ""))
+        .filter((x) => x.startsWith("http"))
+        .forEach((url) => {
+          const key = url.toLowerCase();
+          if (!seen.has(key)) {
+            seen.add(key);
+            urls.push(url);
+          }
+        });
+      return urls;
+    }
+
+    const HOST_BRAND_ALIASES = {
+      nekteck: "Nekteck",
+      renpho: "Renpho",
+      snailax: "Snailax",
+      comfier: "Comfier",
+      resteck: "Resteck",
+      fitking: "Fitking",
+      bobandbrad: "Bob & Brad",
+      bobbrad: "Bob & Brad",
+      therabody: "Therabody",
+      hyperice: "Hyperice",
+    };
+
+    function inferBrandFromUrl(url) {
+      let host = "";
+      try {
+        host = new URL(url).hostname.toLowerCase();
+      } catch {
+        return "";
+      }
+      const compact = host.replace(/[^a-z0-9]+/g, "");
+      for (const [token, brand] of Object.entries(HOST_BRAND_ALIASES)) {
+        if (compact.includes(token)) return brand;
+      }
+      const first = host.replace(/^www\./, "").split(".")[0];
+      return first ? first.charAt(0).toUpperCase() + first.slice(1) : "";
+    }
+
+    function selectedBrandArray() {
+      const selected = Array.from(document.querySelectorAll('input[name="brandOption"]:checked'))
+        .map((opt) => opt.value.trim())
+        .filter(Boolean);
+      const custom = (document.getElementById("brandCustomInput").value || "")
+        .split(/[,\n|]+/)
+        .map((x) => x.trim())
+        .filter(Boolean);
+      const deduped = [];
+      [...selected, ...custom].forEach((brand) => {
+        if (!deduped.some((x) => x.toLowerCase() === brand.toLowerCase())) {
+          deduped.push(brand);
+        }
+      });
+      return deduped;
+    }
+
+    function brandForUrl(url, brands) {
+      const inferred = inferBrandFromUrl(url);
+      if (inferred && brands.some((brand) => brand.toLowerCase() === inferred.toLowerCase())) {
+        return inferred;
+      }
+      if (brands.length === 1) return brands[0];
+      if (inferred && inferred.toLowerCase() !== "amazon") return inferred;
+      return brands.find((brand) => brand.toLowerCase() !== "nekteck") || brands[0] || inferred;
+    }
+
+    function relationshipForUrl(url, brand) {
+      const selected = document.getElementById("linkRelationshipInput").value;
+      if (selected) return selected;
+      const inferred = inferBrandFromUrl(url);
+      return String(brand || inferred).toLowerCase() === "nekteck" ? "owned" : "competitor";
+    }
+
+    async function addLinks() {
+      const links = parseLinksInput();
+      if (links.length === 0) {
+        document.getElementById("linkMsg").textContent = "请至少输入1个链接。";
+        return;
+      }
+      const brands = selectedBrandArray();
+      const productLine = document.getElementById("lineInput").value.trim();
+      const category = document.getElementById("categoryInput").value.trim();
+      const priority = document.getElementById("priorityInput").value;
+      const countryMarket = document.getElementById("countryInput").value.trim() || "US";
+      const watchKeywords = document.getElementById("keywordsInput").value.trim();
+      const entries = links.map((url) => {
+        const brand = brandForUrl(url, brands);
+        return {
+          url,
+          brand,
+          brands,
+          relationship: relationshipForUrl(url, brand),
+          category,
+          country_market: countryMarket,
+          priority,
+          product_line: productLine || category,
+          watch_keywords: watchKeywords,
+          enabled: true,
+        };
+      });
+      const data = await postJson("/api/add-links", { links: entries });
+      if (!data.ok) {
+        document.getElementById("linkMsg").textContent = `失败：${data.error || "unknown error"}`;
+        return;
+      }
+      const warnings = (data.validation_warnings || []).map((x) => `提醒：${x}`).join("  ");
+      document.getElementById("linkMsg").textContent = `已处理：新增 ${data.added}，更新 ${data.updated}${warnings ? "；" + warnings : ""}`;
+      await refreshAll();
+    }
+
+    async function runNow() {
+      const data = await postJson("/api/run-monitor", {});
+      if (!data.ok) {
+        alert(`运行失败：${data.error || "unknown error"}`);
+        return;
+      }
+      const summary = data.summary || {};
+      alert(`运行完成：处理${summary.products_processed || 0}，成功${summary.success_count || 0}，异常${summary.error_count || 0}，告警${summary.alerts_count || 0}\n${mailResultText(summary.mail_result)}`);
+      await refreshAll();
+    }
+
+    function scalarText(value) {
+      if (value === null || value === undefined) return "-";
+      if (typeof value === "number") {
+        if (!Number.isFinite(value)) return "-";
+        return String(value);
+      }
+      const text = String(value).trim();
+      return text ? text : "-";
+    }
+
+    function formatMainParamValue(record, key) {
+      const main = record.main_params || {};
+      const value = main[key];
+      const currency = scalarText(main.currency || record.currency || "").replace("-", "");
+      if (key === "price" || key === "list_price") {
+        if (value === null || value === undefined || value === "") return "-";
+        const num = Number(value);
+        if (!Number.isFinite(num)) return scalarText(value);
+        return `${num.toFixed(2)}${currency ? ` ${currency}` : ""}`;
+      }
+      if (key === "discount_percent") {
+        if (value === null || value === undefined || value === "") return "-";
+        const num = Number(value);
+        if (!Number.isFinite(num)) return scalarText(value);
+        return `${num.toFixed(1)}%`;
+      }
+      if (key === "rating_value") {
+        if (value === null || value === undefined || value === "") return "-";
+        const num = Number(value);
+        if (!Number.isFinite(num)) return scalarText(value);
+        return num.toFixed(2);
+      }
+      return scalarText(value);
+    }
+
+    function renderCompare(records, tables) {
+      const wrap = document.getElementById("compareWrap");
+      if (!records || records.length === 0) {
+        wrap.innerHTML = `<div class="muted">未返回有效结果</div>`;
+        return;
+      }
+
+      const config = tables || state.fieldConfig || {};
+      const mainRows = (config.main_param_rows || []).filter((x) => x && x.key);
+      const gtmRows = (config.gtm_required_rows || []).filter((x) => x && x.key);
+      const signalRows = (config.feature_signal_rows || []).filter((x) => x && x.key);
+
+      const summaryCards = records.map((r, idx) => {
+        const missing = (r.gtm_required_missing_fields || r.gtm_missing_fields || []);
+        const suggestions = (r.gtm_suggestions || []).slice(0, 3).map((s) => `
+          <div class="suggestion">
+            <b>${esc(s.topic || "建议")}</b>
+            <div>${esc(s.message || "")}</div>
+            <div class="muted">${esc(s.action || "")}</div>
+          </div>
+        `).join("");
+        return `
+          <div class="compare-item">
+            <div><b>${esc(r.title || `产品${idx + 1}`)}</b></div>
+            <div class="muted">${esc(r.url || "")}</div>
+            <div style="margin-top:6px;">
+              <span class="chip">${esc(r.brand || "-")}</span>
+              <span class="chip">${esc(r.relationship === "owned" ? "自有" : "竞品")}</span>
+              <span class="chip">${esc(r.channel || r.site_type || "-")}</span>
+              <span class="chip">${esc(r.url_type || "-")}</span>
+            </div>
+            <div style="margin-top:8px;"><b>价格:</b> ${formatMainParamValue(r, "price")}</div>
+            <div><b>GTM:</b> ${esc(r.gtm_score)} (${r.gtm_score_pct ?? 0}%)</div>
+            <div class="bar"><span style="width:${Number(r.gtm_score_pct || 0)}%"></span></div>
+            <div style="margin-top:6px;"><b>库存:</b> ${esc(scalarText(r.availability))} | <b>评分:</b> ${esc(formatMainParamValue(r, "rating_value"))}</div>
+            <div><b>SKU:</b> ${esc(scalarText(r.sku))} | <b>卖点/参数:</b> ${r.features_count || 0}/${r.specs_count || 0}</div>
+            <div style="margin-top:6px;"><b>缺失字段:</b> ${missing.length > 0 ? missing.map((x) => `<span class="chip">${esc(x)}</span>`).join("") : `<span class="chip">无</span>`}</div>
+            ${suggestions ? `<div class="suggestion-list">${suggestions}</div>` : ""}
+          </div>
+        `;
+      }).join("");
+
+      let mainTable = `
+        <div class="section-title">主要参数对比（可视化）</div>
+        <div class="matrix-panel">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>参数</th>
+                ${records.map((r, idx) => `<th>产品${idx + 1}<div class="muted">${esc((r.brand || "").slice(0, 28))}</div></th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      mainRows.forEach((row) => {
+        mainTable += `<tr><td><b>${esc(row.label || row.key)}</b></td>`;
+        records.forEach((r) => {
+          const val = formatMainParamValue(r, row.key);
+          const cls = val === "-" ? "value-missing" : "";
+          mainTable += `<td class="${cls}">${esc(val)}</td>`;
+        });
+        mainTable += `</tr>`;
+      });
+      mainTable += `</tbody></table></div>`;
+
+      let gtmTable = `
+        <div class="section-title">GTM必要字段覆盖</div>
+        <div class="matrix-panel">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>字段</th>
+                ${records.map((r, idx) => `<th>产品${idx + 1}</th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      gtmRows.forEach((row) => {
+        gtmTable += `<tr><td><b>${esc(row.label || row.key)}</b></td>`;
+        records.forEach((r) => {
+          const ok = !!((r.gtm_required_coverage || {})[row.key]);
+          gtmTable += `<td class="${ok ? "value-hit" : "value-missing"}">${ok ? "✅" : "❌"}</td>`;
+        });
+        gtmTable += `</tr>`;
+      });
+      gtmTable += `</tbody></table></div>`;
+
+      let signalTable = `
+        <div class="section-title">卖点关键词信号</div>
+        <div class="matrix-panel">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>信号</th>
+                ${records.map((r, idx) => `<th>产品${idx + 1}</th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      signalRows.forEach((row) => {
+        signalTable += `<tr><td><b>${esc(row.label || row.key)}</b></td>`;
+        records.forEach((r) => {
+          const ok = !!((r.feature_signals || {})[row.key]);
+          signalTable += `<td class="${ok ? "value-hit" : "value-missing"}">${ok ? "✅" : "❌"}</td>`;
+        });
+        signalTable += `</tr>`;
+      });
+      signalTable += `</tbody></table></div>`;
+
+      wrap.innerHTML = `
+        <div class="compare-summary-grid">${summaryCards}</div>
+        ${mainTable}
+        ${gtmTable}
+        ${signalTable}
+      `;
+    }
+
+    async function compareLinks() {
+      const links = parseLinksInput();
+      const brands = selectedBrandArray();
+      if (links.length === 1) {
+        document.getElementById("linkMsg").textContent = "即时链接对比至少需要2个链接；或清空链接框，只按勾选品牌默认对比按摩品类。";
+        return;
+      }
+      if (links.length === 0 && brands.length === 0) {
+        document.getElementById("linkMsg").textContent = "请至少输入2个链接，或勾选品牌后按默认按摩品类对比。";
+        return;
+      }
+      const payload = links.length >= 2
+        ? { links }
+        : {
+            links: [],
+            brands,
+            category_tokens: DEFAULT_MASSAGE_CATEGORY_TOKENS,
+            limit: 8,
+          };
+      document.getElementById("linkMsg").textContent = links.length >= 2
+        ? "正在按链接即时抓取对比..."
+        : `未输入链接，正在按 ${brands.join(" / ")} 的按摩品类做默认对比...`;
+      const data = await postJson("/api/compare-links", payload);
+      if (!data.ok) {
+        document.getElementById("linkMsg").textContent = `对比失败：${data.error || "unknown error"}`;
+        return;
+      }
+      state.fieldConfig = data.field_config || data.tables || state.fieldConfig;
+      renderCompare(data.records || [], data.field_config || data.tables || state.fieldConfig);
+      document.getElementById("linkMsg").textContent = links.length >= 2
+        ? `对比完成：${(data.records || []).length} 个链接结果。`
+        : `默认按摩品类对比完成：${(data.records || []).length} 个产品。`;
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", runQuery);
+    document.getElementById("searchInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        runQuery();
+      }
+    });
+    document.getElementById("clearBtn").addEventListener("click", clearPageState);
+    document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+    document.getElementById("runBtn").addEventListener("click", runNow);
+    document.getElementById("addLinksBtn").addEventListener("click", addLinks);
+    document.getElementById("saveEmailBtn").addEventListener("click", saveEmailSettings);
+    document.getElementById("testEmailBtn").addEventListener("click", sendTestEmail);
+    document.getElementById("compareBtn").addEventListener("click", compareLinks);
+    Array.from(document.querySelectorAll('input[name="brandOption"]')).forEach((opt) => {
+      opt.addEventListener("change", () => {
+        if (!hasQueryCriteria()) {
+          loadBrandDefaultMatrix();
+        }
+      });
+    });
+    document.getElementById("brandCustomInput").addEventListener("input", () => {
+      if (!hasQueryCriteria()) {
+        loadBrandDefaultMatrix();
+      }
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if (event.persisted) {
+        refreshAll();
+      }
+    });
+    refreshAll();
+  </script>
+</body>
+</html>
