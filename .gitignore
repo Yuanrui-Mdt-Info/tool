@@ -6,4 +6,7 @@ outputs/
 logs/
 data/monitor.db
 data/*.local.env
-
+GTM search/outputs/
+GTM search/logs/
+GTM search/data/monitor.db
+GTM search/data/*.local.env

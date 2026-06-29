@@ -1,7 +1,7 @@
 #!/bin/zsh
 set -u
 
-PROJECT_DIR="/Users/WIll/Desktop/CODEX/competitor_product_monitor_mvp"
+PROJECT_DIR="/Users/WIll/Desktop/CODEX/tool/GTM search"
 LOG_DIR="$PROJECT_DIR/logs"
 mkdir -p "$LOG_DIR"
 cd "$PROJECT_DIR" || exit 78
