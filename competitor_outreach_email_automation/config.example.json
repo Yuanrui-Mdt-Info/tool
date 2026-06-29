@@ -1,0 +1,73 @@
+{
+  "discovery": {
+    "enabled": true,
+    "source_policy": "public_web_first",
+    "exclude_owned_domains": ["example-owned-brand.com"],
+    "lookback_days": 60,
+    "opportunity_min_score": 65
+  },
+  "contact_enrichment": {
+    "enabled": true,
+    "prefer_personal_editor_emails": true,
+    "suppress_public_role_inboxes": true,
+    "skip_bounced_contacts": true,
+    "allowed_contact_quality": ["DIRECT_EMAIL", "DOMAIN_EMAIL"]
+  },
+  "mail": {
+    "mode": "prepare",
+    "live_send_requires_explicit_confirmation": true,
+    "max_send_per_run": 8,
+    "require_approval_status": "APPROVED",
+    "sender_profile": {
+      "from_name": "Brand Marketing Team",
+      "from_email_env": "MAIL_FROM_ADDRESS",
+      "reply_to_env": "MAIL_REPLY_TO"
+    },
+    "templates": {
+      "initial": "templates/outreach_initial_generic.txt",
+      "followup_1": "templates/outreach_followup_1.txt",
+      "followup_2": "templates/outreach_followup_2.txt",
+      "quote_request": "templates/auto_reply_quote_request.txt",
+      "sample_confirmation": "templates/auto_reply_sample_confirmation.txt"
+    }
+  },
+  "reply_monitoring": {
+    "enabled": true,
+    "imap_enabled": true,
+    "classify_replies": true,
+    "categories": [
+      "QUOTE_OR_BUDGET",
+      "QUOTE_PROVIDED",
+      "SAMPLE_OR_SHIPPING",
+      "MEETING_INVITE",
+      "DECLINED",
+      "OUT_OF_OFFICE",
+      "INFO_NEEDED"
+    ]
+  },
+  "collaboration_sync": {
+    "feishu_enabled": true,
+    "clickup_enabled": true,
+    "continue_local_status_when_sync_fails": true,
+    "boards": [
+      "opportunity_queue",
+      "outbound_mail_queue",
+      "reply_layered_board",
+      "daily_ops_status"
+    ]
+  },
+  "reporting": {
+    "include_counts": [
+      "discovered_links",
+      "scored_opportunities",
+      "contactable",
+      "prepared_emails",
+      "sent_emails",
+      "new_replies",
+      "manual_tasks",
+      "errors"
+    ],
+    "include_blockers": true,
+    "keep_concise": true
+  }
+}

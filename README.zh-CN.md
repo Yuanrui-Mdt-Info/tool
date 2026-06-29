@@ -43,6 +43,7 @@ English README: [README.md](README.md)
 - `scripts/email_gateway.py`：SMTP 加载与发信
 - `scripts/export_latest_board.py`：最新状态看板导出
 - `feishu_approval_patrol/`：飞书审批巡检自动化用例说明
+- `competitor_outreach_email_automation/`：竞品媒介线索与邮件外联自动化用例说明
 - `outputs/`：运行摘要和预警预览
 
 ## 快速开始
