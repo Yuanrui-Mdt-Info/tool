@@ -42,6 +42,7 @@ English README: [README.md](README.md)
 - `scripts/monitor_core.py`：抓取/解析/存储/变更检测逻辑
 - `scripts/email_gateway.py`：SMTP 加载与发信
 - `scripts/export_latest_board.py`：最新状态看板导出
+- `feishu_approval_patrol/`：飞书审批巡检自动化用例说明
 - `outputs/`：运行摘要和预警预览
 
 ## 快速开始
@@ -218,4 +219,3 @@ MVP 阶段建议先用每 2-6 小时执行一次，而不是分钟级轮询。
 - 被拦截时会保留失败状态，但可回退展示最近成功快照（标记为 stale），保证看板可读性。
 - 当前版本优先保证流程可靠性，而非字段 100% 完整覆盖。
 - 若要稳定覆盖 Amazon，下一阶段建议接入数据 API 适配层（如 Keepa/Rainforest）。
-

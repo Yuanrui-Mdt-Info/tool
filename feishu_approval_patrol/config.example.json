@@ -1,0 +1,40 @@
+{
+  "transport": {
+    "mode": "faray_lark_gateway",
+    "require_logged_in_user": true,
+    "do_not_use_legacy_app_secret_path": true
+  },
+  "schedule": {
+    "timezone": "Asia/Shanghai",
+    "contract_patrol": "daily 14:00",
+    "material_patrol": "hourly",
+    "ru_sample_presign_patrol": "hourly"
+  },
+  "contract_approval": {
+    "enabled": true,
+    "zero_cost_auto_approve": true,
+    "manual_for_non_zero_or_ambiguous": true,
+    "handle_submit_or_confirmation_nodes": true,
+    "only_current_account_tasks": true,
+    "manual_if_framework_agreement": true
+  },
+  "material_approval": {
+    "enabled": true,
+    "keywords": ["包材", "样板", "样品"],
+    "default_action": "manual_review",
+    "mutate_only_when_explicitly_instructed": true
+  },
+  "ru_sample_presign": {
+    "enabled": true,
+    "require_ru_signal": true,
+    "require_sample_or_material_signal": true,
+    "action": "add_pre_approver",
+    "do_not_approve_or_reject": true
+  },
+  "reporting": {
+    "include_counts": ["fetched", "matched", "approved", "rejected", "manual", "skipped", "errors"],
+    "include_titles_and_serials": true,
+    "include_blockers": true,
+    "keep_concise": true
+  }
+}
